@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <set>
+#include <map>
 using namespace std;
 
 class Donnee {
@@ -39,19 +40,13 @@ class NoeudSysteme {
         }
 };
 
-class Graphe : public Arrete {
+class Graphe{
     public:
         set<int> nodesIds;
-    Graphe(set<int> attr_nodesIds)
-};
-
-class Arrete {
-    public:
-        set<int> ArreteIds;
-        int poids; // Représente le temps d'accès entre les deux noeuds dans le set
-    Arrete(set<int> attr_ArreteIds, int attr_poids) {
-        ArreteIds = attr_ArreteIds;
-        poids = attr_poids;
+        map<set<int>, int> arrete;
+    Graphe(set<int> attr_nodesIds, map<set<int>, int> attr_arrete) {
+        nodesIds = attr_nodesIds;
+        arrete = attr_arrete;
     }
 };
 
@@ -86,7 +81,8 @@ int main() {
     Utilisateur U6(6, {1007}, 3004);
 
     // Création du graphe avec les poids
-    Arrete 
+    Graphe G({1000,1001, 1002, 1003,1004, 1005, 1006, 1007, 1008, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 3000, 3001, 3002, 3003, 3004})
+    
 
     return 0;
 };
