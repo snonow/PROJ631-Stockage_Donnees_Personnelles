@@ -1,4 +1,5 @@
 from classes import *
+from PlacementDonnee import placer_donnees_dans_graphe
  
 # Création des Données
 donnees = [Donnee(i, 30) for i in range(9)]
@@ -38,5 +39,6 @@ aretes = [
 ]
 
 # Création du graphe
-graphe = Graphe(aretes, utilisateurs, donnees)
+graphe = Graphe(aretes, utilisateurs, donnees, noeuds_systemes)
 
+placer_donnees_dans_graphe(graphe)

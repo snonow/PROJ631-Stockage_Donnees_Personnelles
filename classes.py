@@ -50,10 +50,11 @@ class Arete:
         self.poids = poids
 
 class Graphe:
-    def __init__(self, aretes:list, utilisateurs:list, donneesAPlacer:list):
+    def __init__(self, aretes:list, utilisateurs:list, donneesAPlacer:list, noeudsSysteme:list):
         self.aretes = aretes
         self.utilisateurs = utilisateurs
         self.donneesAPlacer = donneesAPlacer
+        self.noeudsSysteme = noeudsSysteme
 
     def getUtilisateurs(self) -> list[Utilisateur]:
         return self.utilisateurs
@@ -73,26 +74,8 @@ class Graphe:
         """
         self.donneesAPlacer.sort(key=lambda donnee: donnee.id)
     
-    def getNoeudSystemes(self) -> list[NoeudSysteme]:
-        """
-        Renvoie la liste de tous les nœuds système dans le graphe.
-
-        Returns:
-            list[NoeudSysteme]: Liste de tous les nœuds système dans le graphe.
-        """
-        # Initialise une liste vide pour stocker les nœuds système
-        liste_noeuds_systemes = []
-        
-        # Parcourt toutes les arêtes pour obtenir tous les nœuds système
-        for arete in self.aretes:
-            n1, n2 = arete.areteIds
-            # Vérifie si les nœuds de l'arête sont des nœuds système et les ajoute à la liste si nécessaire
-            if isinstance(n1, NoeudSysteme) and n1 not in liste_noeuds_systemes:
-                liste_noeuds_systemes.append(n1)
-            if isinstance(n2, NoeudSysteme) and n2 not in liste_noeuds_systemes:
-                liste_noeuds_systemes.append(n2)
-        
-        return liste_noeuds_systemes
+    def getNoeudsSysteme(self) -> list[NoeudSysteme]:
+        return self.noeudsSysteme
     
     def addNoeudSystemeDonneeSL(self, noeudSysID:int, donnee:Donnee):
         """
@@ -107,14 +90,9 @@ class Graphe:
         """
         # Vérifie si le nœud système spécifié existe dans le graphe
         noeud_trouve = False
-        for arete in self.aretes:
-            n1, n2 = arete.areteIds
-            if isinstance(n1, NoeudSysteme) and n1.id == noeudSysID:
-                n1.donneesStockeesLocalement.append(donnee)
-                noeud_trouve = True
-                break
-            elif isinstance(n2, NoeudSysteme) and n2.id == noeudSysID:
-                n2.donneesStockeesLocalement.append(donnee)
+        for ns in self.noeudsSysteme:
+            if ns.id == noeudSysID:
+                ns.donneesStockeesLocalement.append(donnee)
                 noeud_trouve = True
                 break
         
@@ -162,7 +140,7 @@ class Graphe:
                     break
         chemin.append(depart)
         return chemin[::-1]
-    
+
     def cout_chemin(self, depart: int, arrivee: int) -> int:
         """
         Calcule le coût d'un chemin dans le graphe.
