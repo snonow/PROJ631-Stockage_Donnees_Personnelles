@@ -5,11 +5,11 @@ donnees = [Donnee(i, 30) for i in range(9)]
 
 # Création des Noeuds Systèmes
 noeuds_systemes = [
-    NoeudSysteme(0, 40, [], [3001, 3002, 3003, 3004]),
-    NoeudSysteme(1, 50, [1000, 1001, 1002, 1003, 1005], [3000, 3002, 3003, 3004, 2000, 2001, 2002]),
-    NoeudSysteme(2, 40, [1004], [3000, 3001, 3003, 3004, 2003]),
-    NoeudSysteme(3, 50, [1006], [3000, 3001, 3002, 3004, 2004]),
-    NoeudSysteme(4, 40, [1007, 1008], [3000, 3001, 3002, 3003, 2005, 2006])
+    NoeudSysteme(0, 40, [3001, 3002, 3003, 3004]),
+    NoeudSysteme(1, 50, [3000, 3002, 3003, 3004, 2000, 2001, 2002]),
+    NoeudSysteme(2, 40, [3000, 3001, 3003, 3004, 2003]),
+    NoeudSysteme(3, 50, [3000, 3001, 3002, 3004, 2004]),
+    NoeudSysteme(4, 40, [3000, 3001, 3002, 3003, 2005, 2006])
 ]
 
 # Création des Utilisateurs
@@ -38,5 +38,5 @@ aretes = [
 ]
 
 # Création du graphe
-graphe = Graphe(aretes)
+graphe = Graphe(aretes, utilisateurs, donnees)
 
