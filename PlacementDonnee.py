@@ -1,21 +1,12 @@
 from classes import *
 
-def quiEstInteresse(donneeID:int, utilisateurs:list):
+def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[Utilisateur], graphe: Graphe) -> int:
     """
-    Permet de trouver l'utilisateur intéressé 
-    par la donné mis en argument
-    """
-    for u in utilisateurs:
-        if donneeID in u.getInterets():
-            return u
-
-def PlacementDonnee(userInteresse: Utilisateur, donnee: Donnee, graphe: Graphe) -> int:
-    """
-    Place la donnée pour l'utilisateur intéressé en trouvant le meilleur noeud système disponible.
+    Place la donnée pour l'utilisateur intéressé en trouvant le meilleur nœud système disponible.
 
     Args:
-        userInteresse (Utilisateur): L'utilisateur intéressé par la donnée.
         donnee (Donnee): La donnée à placer.
+        utilisateurs (list[Utilisateur]): Utilisateurs intéressés par la donnée.
         graphe (Graphe): Graphe dans lequel on opère.
 
     Returns:
@@ -23,32 +14,31 @@ def PlacementDonnee(userInteresse: Utilisateur, donnee: Donnee, graphe: Graphe) 
     """
 
     meilleure_noeud = None
-    meilleure_poidsTotal = float('inf')
+    meilleure_poids_total = float('inf')
 
-    # Parcourir toutes les arêtes pour trouver la meilleure arête disponible
-    lstNoeudSysteme = graphe.getNoeudSystemes()
-    for NoeudSysteme in lstNoeudSysteme:
-        cout_chemin = graphe.cout_chemin(userInteresse.getID(), NoeudSysteme.getID())
-        if (cout_chemin < meilleure_poidsTotal) and (not NoeudSysteme.isFull([donnee.getTaille()])) :
-            meilleure_noeud = NoeudSysteme
-            meilleure_poidsTotal = cout_chemin
+    # Parcourir tous les nœuds système pour trouver le meilleur nœud disponible
+    for noeud in graphe.getNoeudSystemes():
+        # Vérifier si le nœud a suffisamment de capacité pour stocker la donnée
+        if not noeud.isFull([donnee.getTaille()]):
+            # Calculer le coût total entre le nœud et chaque utilisateur intéressé par cette donnée et l'additionner
+            cout_chemin_total = sum(graphe.cout_chemin(utilisateur.getID(), noeud.getID()) for utilisateur in utilisateurs)
+            if cout_chemin_total < meilleure_poids_total:
+                meilleure_noeud = noeud
+                meilleure_poids_total = cout_chemin_total
             
-    graphe.addNoeudSystemeDonneeSL(meilleure_noeud.getID(), donnee)
-
-    if meilleure_noeud is None:
+    if meilleure_noeud is not None:
+        graphe.addNoeudSystemeDonneeSL(meilleure_noeud.getID(), donnee)
+    else:
         print("Impossible de placer la donnée.")
 
-def JeMetCaOu(graphe:Graphe) -> dict:
+def placer_donnees_dans_graphe(graphe: Graphe) -> None:
     """
-    Fonction qui répond à la question 2 du projet du projet
-    et qui permet de savoir où il faut mettre les données qui
-    intèresse certains utilisateurs
+    Place toutes les données dans le graphe en les associant aux nœuds système appropriés.
 
     Args:
-        donnee (Donnee): La donnée à placer
-        graphe (Graphe): Le graphe dans lequel on opère
+        graphe (Graphe): Le graphe dans lequel placer les données.
     """
     graphe.orderDonneesAPlacerByID()
-    for donnee in graphe.donnees :
-        userInteresse = quiEstInteresse(donnee.getID(), graphe.getUtilisateurs())
-        PlacementDonnee(userInteresse, donnee, graphe)
+    for donnee in graphe.donnees:
+        utilisateurs_interesses = [utilisateur for utilisateur in graphe.getUtilisateurs() if donnee.getID() in utilisateur.getInterets()]
+        placer_donnee_pour_utilisateur_interesse(donnee, utilisateurs_interesses, graphe)
