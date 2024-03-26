@@ -3,22 +3,11 @@
   "configurations": [
     {
       "name": "C/C++ Runner: Debug Session",
-      "type": "cppdbg",
+      "type": "lldb",
       "request": "launch",
       "args": [],
-      "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/Arno/iCloudDrive/Travail/Polytech Annecy/IDU-3/Semestre 06/PROJ631 - Projet Algorithmique/PROJ631-Stockage_Donnees_Personnelles-main",
-      "program": "c:/Users/Arno/iCloudDrive/Travail/Polytech Annecy/IDU-3/Semestre 06/PROJ631 - Projet Algorithmique/PROJ631-Stockage_Donnees_Personnelles-main/build/Debug/outDebug",
-      "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ]
+      "cwd": "/Users/arnow/Library/Mobile Documents/com~apple~CloudDocs/Travail/Polytech Annecy/IDU-3/Semestre 06/PROJ631 - Projet Algorithmique/PROJ631-Stockage_Donnees_Personnelles",
+      "program": "/Users/arnow/Library/Mobile Documents/com~apple~CloudDocs/Travail/Polytech Annecy/IDU-3/Semestre 06/PROJ631 - Projet Algorithmique/PROJ631-Stockage_Donnees_Personnelles/build/Debug/outDebug"
     }
   ]
 }
