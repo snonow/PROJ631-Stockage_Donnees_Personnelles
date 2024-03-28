@@ -17,11 +17,14 @@ class Utilisateur:
         self.interets = interets
         self.noeudSystemeAccessible = noeudSystemeAccessible
 
-    def getInterets(self) -> list :
+    def getInterets(self) -> list:
         return self.interets
     
     def getID(self) -> int:
         return self.id
+    
+    def getNoeudSystemeAccessible(self) -> int:
+        return self.noeudSystemeAccessible
 
 class NoeudSysteme:
     def __init__(self, id:int, capaciteMemoire:int, noeudsAccessibles:list):
@@ -50,11 +53,40 @@ class Arete:
         self.poids = poids
 
 class Graphe:
-    def __init__(self, aretes:list, utilisateurs:list, donneesAPlacer:list, noeudsSysteme:list):
+    def __init__(self, aretes:list[Arete], utilisateurs:list[Utilisateur], donneesAPlacer:list[Donnee], noeudsSysteme:list[NoeudSysteme]):
         self.aretes = aretes
         self.utilisateurs = utilisateurs
         self.donneesAPlacer = donneesAPlacer
         self.noeudsSysteme = noeudsSysteme
+        self.voisins = self.calculer_voisins()
+        
+    def calculer_voisins(self) -> dict:
+        """
+        Calcule les voisins pour chaque nœud dans le graphe, y compris les utilisateurs.
+
+        Returns:
+            dict: Un dictionnaire où les clés sont les identifiants des nœuds et les valeurs sont les ensembles de voisins.
+        """
+        voisins = {}
+
+        # Ajouter les utilisateurs comme clés avec leur unique voisin
+        for utilisateur in self.utilisateurs:
+            voisins[utilisateur.id] = {utilisateur.noeudSystemeAccessible}
+
+        # Ajouter les voisins des nœuds système
+        for arete in self.aretes:
+            n1, n2 = arete.areteIds
+            voisins.setdefault(n1, set()).add(n2)
+            voisins.setdefault(n2, set()).add(n1)
+
+            # Vérifier si les nœuds sont également des utilisateurs pour garantir la bidirectionnalité
+            if n1 in self.utilisateurs:
+                voisins[n2].add(n1)
+            if n2 in self.utilisateurs:
+                voisins[n1].add(n2)
+
+        return voisins
+
 
     def getUtilisateurs(self) -> list[Utilisateur]:
         return self.utilisateurs
@@ -111,35 +143,52 @@ class Graphe:
         Returns:
             list: Liste des nœuds formant le chemin le moins coûteux.
         """
-        distances = {node: float('infinity') for node in range(3000, 4000)}  # Initialisation des distances à l'infini
+        distances = {node: float('infinity') for node in self.voisins.keys()}  # Initialisation des distances à l'infini
         distances[depart] = 0
         pq = [(0, depart)]  # Tuple (distance, noeud)
 
         while pq:
+            print(pq)
             distance_actuelle, noeud_actuel = heapq.heappop(pq)
 
             if distance_actuelle > distances[noeud_actuel]:
                 continue
 
-            for arete in self.aretes:
-                if noeud_actuel in arete.areteIds:
-                    voisin = (arete.areteIds - {noeud_actuel}).pop()
-                    poids = arete.poids
-                    distance = distance_actuelle + poids
-                    if distance < distances[voisin]:
-                        distances[voisin] = distance
-                        heapq.heappush(pq, (distance, voisin))
+            # Utilisation des voisins précalculés
+            for voisin in self.voisins[noeud_actuel]:
+                print(self.voisins[noeud_actuel], voisin)
+                poids = self.get_poids_arete(noeud_actuel, voisin)
+                distance = distance_actuelle + poids
+                print(pq, distances, distance < distances[voisin])
+                if distance < distances[voisin]:
+                    distances[voisin] = distance
+                    heapq.heappush(pq, (distance, voisin))
+                    
 
         chemin = []
         noeud = arrivee
         while noeud != depart:
             chemin.append(noeud)
-            for arete in self.aretes:
-                if noeud in arete.areteIds and distances[noeud] - arete.poids == distances[(arete.areteIds - {noeud}).pop()]:
-                    noeud = (arete.areteIds - {noeud}).pop()
-                    break
+            noeud = min(self.voisins[noeud], key=lambda x: distances[x])
         chemin.append(depart)
         return chemin[::-1]
+
+
+    def get_poids_arete(self, n1: int, n2: int) -> int:
+        """
+        Récupère le poids de l'arête entre deux nœuds.
+
+        Args:
+            n1 (int): L'identifiant du premier nœud.
+            n2 (int): L'identifiant du deuxième nœud.
+
+        Returns:
+            int: Le poids de l'arête entre les deux nœuds.
+        """
+        for arete in self.aretes:
+            if n1 in arete.areteIds and n2 in arete.areteIds:
+                return arete.poids
+        return float('infinity')
 
     def cout_chemin(self, depart: int, arrivee: int) -> int:
         """

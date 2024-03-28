@@ -18,7 +18,7 @@ def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[
     meilleure_poids_total = float('inf')
 
     # Parcourir tous les nœuds système pour trouver le meilleur nœud disponible
-    for noeud in graphe.getNoeudsSysteme():
+    for noeud in tqdm(graphe.getNoeudsSysteme(), desc="Recherche du meilleur nœud système"):
         # Vérifier si le nœud a suffisamment de capacité pour stocker la donnée
         if not noeud.isFull([donnee.getTaille()]):
             # Calculer le coût total entre le nœud et chaque utilisateur intéressé par cette donnée et l'additionner
