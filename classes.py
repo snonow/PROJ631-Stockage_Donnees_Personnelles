@@ -2,8 +2,9 @@ import heapq
 
 class Donnee:
     def __init__(self, id:int, taille:int):
-        self.id = 1000 + id
+        self.id = id
         self.taille = taille
+        self.heuristique = 0
         
     def __str__(self) -> str:
         return  f"Donnee({self.id}, {self.taille})"
@@ -13,10 +14,16 @@ class Donnee:
     
     def getTaille(self) -> int:
         return self.taille
-
+    
+    def setHeuristique(self, heuristique:float) -> None :
+        self.heuristique = heuristique
+        
+    def getHeuristique(self) -> None :
+        return self.heuristique
+        
 class Utilisateur:
     def __init__(self, id:int, interets:list, noeudSystemeAccessible:int):
-        self.id = 2000 + id
+        self.id = id
         self.interets = interets
         self.noeudSystemeAccessible = noeudSystemeAccessible
 
@@ -28,16 +35,26 @@ class Utilisateur:
     
     def getNoeudSystemeAccessible(self) -> int:
         return self.noeudSystemeAccessible
+    
 
 class NoeudSysteme:
     def __init__(self, id:int, capaciteMemoire:int, noeudsAccessibles:list):
-        self.id = 3000 + id
+        self.id = id
         self.capaciteMemoire = capaciteMemoire
         self.donneesStockeesLocalement = []
         self.noeudsAccessibles = noeudsAccessibles
         
+    def __str__(self) -> str:
+        return f"Noeud Système {self.id}: Capacité Mémoire = {self.capaciteMemoire}, Noeuds Accessibles = {self.noeudsAccessibles}"
+        
     def getID(self) -> int:
         return self.id
+    
+    def getCapaciteMemoire(self) -> int :
+        return self.capaciteMemoire
+    
+    def getNoeudsAccessibles(self) -> list :
+        return self.noeudsAccessibles
     
     def isFull(self, lstPoidsAAjouter:list=None) -> bool:
         if lstPoidsAAjouter == None:
@@ -52,6 +69,8 @@ class NoeudSysteme:
 
 class Arete:
     def __init__(self, n1:NoeudSysteme, n2:NoeudSysteme, poids:int=0):
+        self.noeudDepart = n1
+        self.noeudArrivee = n2
         self.areteIds = {n1.id, n2.id}
         self.poids = poids
 
@@ -60,6 +79,12 @@ class Arete:
     
     def getAretesIds(self) -> set:
         return self.areteIds
+    
+    def getNoeudDepart(self) -> int :
+        return self.noeudDepart
+    
+    def getNoeudArrivee(self) -> int :
+        return self.noeudArrivee
     
     def getPoids(self) -> int:
         return self.poids
@@ -109,7 +134,6 @@ class Graphe:
 
         return voisins
 
-
     def getUtilisateurs(self) -> list[Utilisateur]:
         return self.utilisateurs
     
@@ -122,21 +146,54 @@ class Graphe:
     def removeDonneesAPlacer(self, d:Donnee) -> None:
         self.donneesAPlacer.remove(d)
         
+    def copie(self):
+        """
+        Crée une copie profonde du graphe.
+
+        Returns:
+            Graphe: Une copie profonde du graphe.
+        """
+        # Copie des listes d'objets en utilisant des listes par compréhension
+        aretes_copie = [Arete(arete.getNoeudDepart(), arete.getNoeudArrivee(), arete.getPoids()) for arete in self.aretes]
+        utilisateurs_copie = [Utilisateur(utilisateur.getID(), utilisateur.getInterets(), utilisateur.getNoeudSystemeAccessible()) for utilisateur in self.utilisateurs]
+        donneesAPlacer_copie = [Donnee(donnee.getID(), donnee.getTaille()) for donnee in self.donneesAPlacer]
+        noeudsSysteme_copie = [NoeudSysteme(noeud.getID(), noeud.getCapaciteMemoire(), noeud.getNoeudsAccessibles()) for noeud in self.noeudsSysteme]
+
+        # Retourne un nouveau graphe avec les listes copiées
+        return Graphe(aretes_copie, utilisateurs_copie, donneesAPlacer_copie, noeudsSysteme_copie)
+        
     def orderDonneesAPlacerByID(self) -> None:
         """
         Trie la liste des données à placer par leur identifiant.
         """
         self.donneesAPlacer.sort(key=lambda donnee: donnee.id)
     
-    def orderDonneesAPlacerByHeuristiqueGlouton(self):
+    def orderDonneesAPlacerByHeuristiqueGlouton(self) -> None:
         """
         Trie la liste des selon leurs ratio décroissant entre nb d'utilisateurs 
         intéressé et leurs poids.
         """
-        
+        for donnee in self.donneesAPlacer:
+            utilisateurs_interesses = [utilisateur for utilisateur in self.utilisateurs if donnee.getID() in utilisateur.getInterets()]
+            n = len(utilisateurs_interesses)
+            donnee.setHeuristique(n/donnee.getTaille())
+        self.donneesAPlacer.sort(key=lambda donnee: donnee.getHeuristique(), reverse=True)
     
     def getNoeudsSysteme(self) -> list[NoeudSysteme]:
         return self.noeudsSysteme
+    
+    def getNoeudSystemeByID(self, id_noeud) -> NoeudSysteme:
+        for noeud in self.noeudsSysteme:
+            if noeud.getID() == id_noeud:
+                return noeud
+            
+    def getTailleDisponibleNoeud(self, id_noeud) -> int:
+        noeud = self.getNoeudSystemeByID(id_noeud)
+        return noeud.getCapaciteMemoire()
+        
+    def getUtilisateursInteressesParDonnee(self, id: int):
+        return [utilisateur for utilisateur in self.getUtilisateurs() if id in utilisateur.getInterets()]
+        
     
     def addNoeudSystemeDonneeSL(self, noeudSysID:int, donnee:Donnee):
         """

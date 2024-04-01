@@ -1,27 +1,28 @@
 from classes import *
-from PlacementDonneeStandard import placer_donnees_dans_graphe
+from PlacementDonnee import *
+from Algo_génétique import *
  
 # Création des Données
-donnees = [Donnee(i, 30) for i in range(9)]
+donnees = [Donnee(i, 30) for i in range(1000, 1009)]
 
 # Création des Noeuds Systèmes
 noeuds_systemes = [
-    NoeudSysteme(0, 40, [3001, 3002, 3003, 3004]),
-    NoeudSysteme(1, 50, [3000, 3002, 3003, 3004, 2000, 2001, 2002]),
-    NoeudSysteme(2, 40, [3000, 3001, 3003, 3004, 2003]),
-    NoeudSysteme(3, 50, [3000, 3001, 3002, 3004, 2004]),
-    NoeudSysteme(4, 40, [3000, 3001, 3002, 3003, 2005, 2006])
+    NoeudSysteme(3000, 40, [3001, 3002, 3003, 3004]),
+    NoeudSysteme(3001, 50, [3000, 3002, 3003, 3004, 2000, 2001, 2002]),
+    NoeudSysteme(3002, 40, [3000, 3001, 3003, 3004, 2003]),
+    NoeudSysteme(3003, 50, [3000, 3001, 3002, 3004, 2004]),
+    NoeudSysteme(3004, 40, [3000, 3001, 3002, 3003, 2005, 2006])
 ]
 
 # Création des Utilisateurs
 utilisateurs = [
-    Utilisateur(0, [1000], 3001),
-    Utilisateur(1, [1001, 1002], 3001),
-    Utilisateur(2, [1003, 1005], 3001),
-    Utilisateur(3, [1004], 3002),
-    Utilisateur(4, [1006], 3003),
-    Utilisateur(5, [1008], 3004),
-    Utilisateur(6, [1007], 3004)
+    Utilisateur(2000, [1000], 3001),
+    Utilisateur(2001, [1001, 1002], 3001),
+    Utilisateur(2002, [1003, 1005], 3001),
+    Utilisateur(2003, [1004], 3002),
+    Utilisateur(2004, [1006], 3003),
+    Utilisateur(2005, [1008], 3004),
+    Utilisateur(2006, [1007], 3004)
 ]
 
 # Création des arêtes
@@ -48,11 +49,16 @@ aretes = [
 # Création du graphe
 graphe = Graphe(aretes, utilisateurs, donnees, noeuds_systemes)
 
+## Placement des données selon plusieurs façon
 
-graphe.dijkstra(2000, 2001)
+# naif(graphe)
 
+# glouton(graphe)
 
-placer_donnees_dans_graphe(graphe)
+# Utilisation de l'algorithme génétique pour résoudre le problème de placement de données
+algorithme_genetique(graphe, taille_population=100, iterations=1000)
 
 
 print(graphe)
+
+

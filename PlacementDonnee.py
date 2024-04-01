@@ -1,9 +1,6 @@
 from classes import *
 
-def prepa_glouton(donnee: Donnee, utilisateurs_interesses: list[Utilisateur]):
-    pass
-
-def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[Utilisateur], graphe: Graphe) -> int:
+def placer_donnee_pour_n_utilisateur_interesse(donnee: Donnee, utilisateurs: list[Utilisateur], graphe: Graphe) -> int:
     """
     Place la donnée pour l'utilisateur intéressé en trouvant 
     le meilleur nœud système disponible.
@@ -36,7 +33,7 @@ def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[
     else:
         print("Impossible de placer la donnée.")
 
-def placer_donnees_dans_graphe(graphe: Graphe) -> None:
+def naif(graphe: Graphe) -> None:
     """
     Place toutes les données dans le graphe en les associant aux nœuds système appropriés.
 
@@ -46,4 +43,16 @@ def placer_donnees_dans_graphe(graphe: Graphe) -> None:
     graphe.orderDonneesAPlacerByID()
     for donnee in graphe.getDonneesAPlacer():
         utilisateurs_interesses = [utilisateur for utilisateur in graphe.getUtilisateurs() if donnee.getID() in utilisateur.getInterets()]
-        placer_donnee_pour_utilisateur_interesse(donnee, utilisateurs_interesses, graphe)
+        placer_donnee_pour_n_utilisateur_interesse(donnee, utilisateurs_interesses, graphe)
+
+def glouton(graphe: Graphe) -> None:
+    '''
+    Définition selon un triage glouton en amont des données les plus importants à placer.
+    
+    Args:
+        graphe (Graphe): Le graphe dans lequel placer les données.
+    '''
+    graphe.orderDonneesAPlacerByHeuristiqueGlouton()
+    for donnee in graphe.getDonneesAPlacer():
+        utilisateurs_interesses = [utilisateur for utilisateur in graphe.getUtilisateurs() if donnee.getID() in utilisateur.getInterets()]
+        placer_donnee_pour_n_utilisateur_interesse(donnee, utilisateurs_interesses, graphe)
