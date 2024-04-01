@@ -1,5 +1,8 @@
 from classes import *
 
+def prepa_glouton(donnee: Donnee, utilisateurs_interesses: list[Utilisateur]):
+    pass
+
 def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[Utilisateur], graphe: Graphe) -> int:
     """
     Place la donnée pour l'utilisateur intéressé en trouvant 

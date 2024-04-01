@@ -128,6 +128,13 @@ class Graphe:
         """
         self.donneesAPlacer.sort(key=lambda donnee: donnee.id)
     
+    def orderDonneesAPlacerByHeuristiqueGlouton(self):
+        """
+        Trie la liste des selon leurs ratio décroissant entre nb d'utilisateurs 
+        intéressé et leurs poids.
+        """
+        
+    
     def getNoeudsSysteme(self) -> list[NoeudSysteme]:
         return self.noeudsSysteme
     
