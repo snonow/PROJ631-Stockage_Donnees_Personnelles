@@ -5,6 +5,9 @@ class Donnee:
         self.id = 1000 + id
         self.taille = taille
         
+    def __str__(self) -> str:
+        return  f"Donnee({self.id}, {self.taille})"
+        
     def getID(self) -> int:
         return self.id
     
@@ -52,6 +55,15 @@ class Arete:
         self.areteIds = {n1.id, n2.id}
         self.poids = poids
 
+    def ___str__(self) -> str:
+        return f"id : {self.areteIds}\tpoids : {self.poids}"
+    
+    def getAretesIds(self) -> set:
+        return self.areteIds
+    
+    def getPoids(self) -> int:
+        return self.poids
+    
 class Graphe:
     def __init__(self, aretes:list[Arete], utilisateurs:list[Utilisateur], donneesAPlacer:list[Donnee], noeudsSysteme:list[NoeudSysteme]):
         self.aretes = aretes
@@ -59,6 +71,16 @@ class Graphe:
         self.donneesAPlacer = donneesAPlacer
         self.noeudsSysteme = noeudsSysteme
         self.voisins = self.calculer_voisins()
+        
+    def __str__(self) -> str:
+        res = ''
+        for noeud in self.noeudsSysteme:
+            res += str(noeud.id) + ' ' + str(noeud.capaciteMemoire) + ' Données : { '
+            for donnee in noeud.donneesStockeesLocalement:
+                res += str(donnee) + ' '
+            res += '}\n'
+        return res
+        
         
     def calculer_voisins(self) -> dict:
         """
@@ -134,7 +156,8 @@ class Graphe:
     
     def dijkstra(self, depart: int, arrivee: int) -> list:
         """
-        Calcule le chemin le moins coûteux entre un utilisateur et un nœud système en utilisant l'algorithme de Dijkstra.
+        Calcule le chemin le moins coûteux entre un utilisateur et un nœud 
+        système en utilisant l'algorithme de Dijkstra.
 
         Args:
             depart (int): L'identifiant de l'utilisateur.
@@ -148,7 +171,6 @@ class Graphe:
         pq = [(0, depart)]  # Tuple (distance, noeud)
 
         while pq:
-            print(pq)
             distance_actuelle, noeud_actuel = heapq.heappop(pq)
 
             if distance_actuelle > distances[noeud_actuel]:
@@ -156,10 +178,8 @@ class Graphe:
 
             # Utilisation des voisins précalculés
             for voisin in self.voisins[noeud_actuel]:
-                print(self.voisins[noeud_actuel], voisin)
                 poids = self.get_poids_arete(noeud_actuel, voisin)
                 distance = distance_actuelle + poids
-                print(pq, distances, distance < distances[voisin])
                 if distance < distances[voisin]:
                     distances[voisin] = distance
                     heapq.heappush(pq, (distance, voisin))

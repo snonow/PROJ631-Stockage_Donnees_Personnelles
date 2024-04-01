@@ -1,5 +1,5 @@
 from classes import *
-from PlacementDonnee import placer_donnees_dans_graphe
+from PlacementDonneeStandard import placer_donnees_dans_graphe
  
 # Création des Données
 donnees = [Donnee(i, 30) for i in range(9)]
@@ -26,19 +26,33 @@ utilisateurs = [
 
 # Création des arêtes
 aretes = [
-    Arete(noeuds_systemes[0], noeuds_systemes[1], 10),
-    Arete(noeuds_systemes[0], noeuds_systemes[2], 20),
-    Arete(noeuds_systemes[0], noeuds_systemes[3], 30),
-    Arete(noeuds_systemes[0], noeuds_systemes[4], 40),
-    Arete(noeuds_systemes[1], noeuds_systemes[2], 50),
-    Arete(noeuds_systemes[1], noeuds_systemes[3], 60),
-    Arete(noeuds_systemes[1], noeuds_systemes[4], 70),
-    Arete(noeuds_systemes[2], noeuds_systemes[3], 80),
-    Arete(noeuds_systemes[2], noeuds_systemes[4], 90),
-    Arete(noeuds_systemes[3], noeuds_systemes[4], 100)
+    Arete(noeuds_systemes[0], noeuds_systemes[1], 1),
+    Arete(noeuds_systemes[0], noeuds_systemes[2], 3),
+    Arete(noeuds_systemes[0], noeuds_systemes[3], 3),
+    Arete(noeuds_systemes[0], noeuds_systemes[4], 3),
+    Arete(noeuds_systemes[1], noeuds_systemes[2], 1),
+    Arete(noeuds_systemes[1], noeuds_systemes[3],3),
+    Arete(noeuds_systemes[1], noeuds_systemes[4], 3),
+    Arete(noeuds_systemes[2], noeuds_systemes[3], 1),
+    Arete(noeuds_systemes[2], noeuds_systemes[4], 3),
+    Arete(noeuds_systemes[3], noeuds_systemes[4], 1),
+    Arete(utilisateurs[0], noeuds_systemes[1], 2),
+    Arete(utilisateurs[1], noeuds_systemes[1], 2),
+    Arete(utilisateurs[2], noeuds_systemes[1], 2),
+    Arete(utilisateurs[3], noeuds_systemes[2], 2),
+    Arete(utilisateurs[4], noeuds_systemes[3], 2),
+    Arete(utilisateurs[5], noeuds_systemes[4], 2),
+    Arete(utilisateurs[6], noeuds_systemes[4], 2)
 ]
 
 # Création du graphe
 graphe = Graphe(aretes, utilisateurs, donnees, noeuds_systemes)
 
+
+graphe.dijkstra(2000, 2001)
+
+
 placer_donnees_dans_graphe(graphe)
+
+
+print(graphe)

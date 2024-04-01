@@ -1,9 +1,9 @@
 from classes import *
-from tqdm import tqdm
 
 def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[Utilisateur], graphe: Graphe) -> int:
     """
-    Place la donnée pour l'utilisateur intéressé en trouvant le meilleur nœud système disponible.
+    Place la donnée pour l'utilisateur intéressé en trouvant 
+    le meilleur nœud système disponible.
 
     Args:
         donnee (Donnee): La donnée à placer.
@@ -18,7 +18,7 @@ def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[
     meilleure_poids_total = float('inf')
 
     # Parcourir tous les nœuds système pour trouver le meilleur nœud disponible
-    for noeud in tqdm(graphe.getNoeudsSysteme(), desc="Recherche du meilleur nœud système"):
+    for noeud in graphe.getNoeudsSysteme():
         # Vérifier si le nœud a suffisamment de capacité pour stocker la donnée
         if not noeud.isFull([donnee.getTaille()]):
             # Calculer le coût total entre le nœud et chaque utilisateur intéressé par cette donnée et l'additionner
@@ -29,6 +29,7 @@ def placer_donnee_pour_utilisateur_interesse(donnee: Donnee, utilisateurs: list[
             
     if meilleure_noeud is not None:
         graphe.addNoeudSystemeDonneeSL(meilleure_noeud.getID(), donnee)
+        print(meilleure_noeud.getID(), donnee)
     else:
         print("Impossible de placer la donnée.")
 
@@ -40,6 +41,6 @@ def placer_donnees_dans_graphe(graphe: Graphe) -> None:
         graphe (Graphe): Le graphe dans lequel placer les données.
     """
     graphe.orderDonneesAPlacerByID()
-    for donnee in tqdm(graphe.getDonneesAPlacer(), desc="Placement des données"):
+    for donnee in graphe.getDonneesAPlacer():
         utilisateurs_interesses = [utilisateur for utilisateur in graphe.getUtilisateurs() if donnee.getID() in utilisateur.getInterets()]
         placer_donnee_pour_utilisateur_interesse(donnee, utilisateurs_interesses, graphe)
