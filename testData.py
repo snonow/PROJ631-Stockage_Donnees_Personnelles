@@ -1,6 +1,6 @@
 from classes import *
 from PlacementDonnee import *
-from Algo_génétique import *
+from algoGenetique import *
  
 # Création des Données
 donnees = [Donnee(i, 30) for i in range(1000, 1009)]

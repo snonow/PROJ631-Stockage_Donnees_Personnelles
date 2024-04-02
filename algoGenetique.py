@@ -20,7 +20,7 @@ def algorithme_genetique(graphe: Graphe, taille_population: int, iterations: int
         fitness_population = [evaluation_fitness(solution, graphe) for solution in population]
         
         # Sélection des meilleurs individus pour la reproduction (roulette)
-        meilleurs_individus = selection_roulette(population, fitness_population, taille_population // 2)
+        meilleurs_individus = selection_meilleur_ratio(population, fitness_population, taille_population // 2)
         
         # Croisement des individus sélectionnés pour former une nouvelle génération
         nouvelle_generation = croisement(meilleurs_individus, taille_population)
@@ -72,9 +72,9 @@ def evaluation_fitness(solution: list[int], graphe: Graphe) -> int:
         utilisateurs_couverts.update(graphe_copie.getUtilisateursInteressesParDonnee(donnee.getID()))
     return len(utilisateurs_couverts)
 
-def selection_roulette(population: list[list[int]], fitness_population: list[int], taille_selection: int) -> list[list[int]]:
+def selection_meilleur_ratio(population: list[list[int]], fitness_population: list[int], taille_selection: int) -> list[list[int]]:
     """
-    Sélectionne les meilleurs individus pour la reproduction à l'aide de la méthode de la roulette.
+    Sélectionne l'individu avec le meilleur ratio entre le nombre d'utilisateurs intéressés et le poids.
 
     Args:
         population (list[list[int]]): La population d'individus.
@@ -82,17 +82,20 @@ def selection_roulette(population: list[list[int]], fitness_population: list[int
         taille_selection (int): La taille de la sélection.
 
     Returns:
-        list[list[int]]: Les meilleurs individus sélectionnés pour la reproduction.
+        list[list[int]]: Les individus sélectionnés pour la reproduction.
     """
-    # Normaliser les fitness pour calculer les probabilités de sélection
-    somme_fitness = sum(fitness_population)
-    if somme_fitness  == 0:
-        probabilites_selection = 0
-    else :
-        probabilites_selection = [fitness / somme_fitness for fitness in fitness_population]
+    # Associer chaque individu à son indice dans la population
+    individus_indices = list(range(len(population)))
 
-    # Sélectionner les individus en fonction des probabilités de sélection
-    return random.choices(population, weights=probabilites_selection, k=taille_selection)
+    # Trier les individus par rapport au ratio (fitness) décroissant
+    individus_tries = sorted(individus_indices, key=lambda x: fitness_population[x], reverse=True)
+
+    # Sélectionner les meilleurs individus en fonction du nombre spécifié
+    meilleurs_individus_indices = individus_tries[:taille_selection]
+
+    # Renvoyer les meilleurs individus de la population
+    return [population[i] for i in meilleurs_individus_indices]
+
 
 def croisement(individus: list[list[int]], taille_population: int) -> list[list[int]]:
     """

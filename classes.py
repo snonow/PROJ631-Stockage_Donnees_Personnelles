@@ -191,7 +191,7 @@ class Graphe:
         noeud = self.getNoeudSystemeByID(id_noeud)
         return noeud.getCapaciteMemoire()
         
-    def getUtilisateursInteressesParDonnee(self, id: int):
+    def getUtilisateursInteressesParDonnee(self, id: int) -> list[Utilisateur]:
         return [utilisateur for utilisateur in self.getUtilisateurs() if id in utilisateur.getInterets()]
         
     
