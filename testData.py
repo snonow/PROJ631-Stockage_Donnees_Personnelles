@@ -55,9 +55,7 @@ graphe = Graphe(aretes, utilisateurs, donnees, noeuds_systemes)
 
 # glouton(graphe)
 
-# Utilisation de l'algorithme génétique pour résoudre le problème de placement de données
-algorithme_genetique(graphe, taille_population=100, iterations=1000)
-
+# algorithme_genetique(graphe, taille_population=100, iterations=1000)
 
 print(graphe)
 
